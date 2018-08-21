@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 8, 2018 3:30:01 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+  <class catalog="capacjavaweb" name="entidades.Link" optimistic-lock="version" table="link">
+    <id name="id" type="int">
+      <column name="id"/>
+      <generator class="assigned"/>
+    </id>
+    <many-to-one class="entidades.Category" fetch="select" name="category">
+      <column name="catid" not-null="true"/>
+    </many-to-one>
+    <property name="title" type="string">
+      <column length="35" name="title" not-null="true"/>
+    </property>
+    <property name="description" type="string">
+      <column length="50" name="description" not-null="true"/>
+    </property>
+    <property name="link" type="string">
+      <column length="35" name="link" not-null="true"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="true" name="authorReferences" table="author_reference">
+      <key>
+        <column name="linkid"/>
+      </key>
+      <one-to-many class="entidades.AuthorReference"/>
+    </set>
+  </class>
+</hibernate-mapping>
