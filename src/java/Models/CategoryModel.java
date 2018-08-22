@@ -101,6 +101,26 @@ public class CategoryModel {
         }        
     }
     
+    public List<String> getListCatNames(){
+        List<String> listaCategorias = new ArrayList<>();
+        Session sesionHibernate = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+            Query q = sesionHibernate.createQuery("select title from Category");
+
+            listaCategorias = q.list();
+
+        } catch (HibernateException ex) {
+            ex.printStackTrace();
+
+        } finally {
+            if (sesionHibernate.isOpen()) {
+                sesionHibernate.close();
+            }
+        }
+        return listaCategorias;
+    }
+    
     
     
     

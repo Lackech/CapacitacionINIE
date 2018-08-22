@@ -9,10 +9,13 @@ import Models.CategoryModel;
 import entidades.Category;
 import java.io.Serializable;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.servlet.http.HttpSession;
+import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -21,6 +24,8 @@ import javax.servlet.http.HttpSession;
 @Named(value = "categoryController")
 @ViewScoped
 public class CategoryController implements Serializable {
+
+   
 
     
     
@@ -32,9 +37,11 @@ public class CategoryController implements Serializable {
     
     private String desc;
 
-    private List<Category> categories;
+    private CategoryModel modeloCategoria;
     
     private HttpSession sesionHttp;
+    
+    private String message;
     
    
     
@@ -42,15 +49,11 @@ public class CategoryController implements Serializable {
      * Creates a new instance of CategoryController
      */
     public CategoryController() {
-        
-        CategoryModel modeloCategoria = new CategoryModel();
-        
-        this.setCategories(modeloCategoria.getListCategories()); 
-        
+                
         sesionHttp = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
         
-        
-        
+        modeloCategoria = new CategoryModel();
+
     }
     
     public String goInsert(){
@@ -66,26 +69,26 @@ public class CategoryController implements Serializable {
     }
     
     
-    public void saveCategory(){
-        
-        CategoryModel modeloCategoria = new CategoryModel();
+    public void saveCategory(){      
         
         modeloCategoria.insertCategory(id, title, desc);
         
     }
     
-    public void removeCategory(int id){
+    public void removeCategory(Category category){
+               
+        modeloCategoria.deleteCategory(category.getId());
         
-        CategoryModel modeloCategoria = new CategoryModel();
+        FacesContext context = FacesContext.getCurrentInstance();
+         
+        context.addMessage(null, new FacesMessage("Successful",  "Your row has been deleted") );
         
-        modeloCategoria.deleteCategory(id);
-    
-        System.out.println("Works");
-    
+        PrimeFaces.current().ajax().update("form1:growl");
+        
     }
     
     public String editCategory(){
-        CategoryModel modeloCategoria = new CategoryModel();
+        
         Category category = new Category(id,title,desc);
         modeloCategoria.updateCategory(category);
         return "tableCategory.xhtml";
@@ -93,27 +96,49 @@ public class CategoryController implements Serializable {
     
     
     public String showCategoryInfo(Category category){
-        
-        CategoryModel modeloCategoria = new CategoryModel();
-        
+               
         sesionHttp.setAttribute("CATEGORY_SELECT", category);
-        
-       
+               
         return "dataCategory.xhtml";
     }
     
     public String updateCategoryInfo(Category category){
-        
-        CategoryModel modeloCategoria = new CategoryModel();
-        
+               
         sesionHttp.setAttribute("CATEGORY_SELECT", category);
         
         return "updateCategory.xhtml";
         
     }
     
+    /*
+    Metodo para el growl
+    */
+    public void showMessage() {
+        FacesContext context = FacesContext.getCurrentInstance();
+         
+        context.addMessage(null, new FacesMessage("Successful",  "Your row has been deleted") );
+        context.addMessage(null, new FacesMessage("Update the webpage"));
+    }
     
     
+    
+    
+    
+    
+    
+     /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * @param message the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }    
     
 
     /**
@@ -171,16 +196,14 @@ public class CategoryController implements Serializable {
     /**
      * @return the categories
      */
-    public List<Category> getCategories() {
-        return categories;
+    public List<Category> getCategories() {     
+        
+        return modeloCategoria.getListCategories();
     }
-
-    /**
-     * @param categories the categories to set
-     */
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
+    
+    
+    
+    
     
    
     

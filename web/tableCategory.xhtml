@@ -7,15 +7,18 @@
         <title>Categories</title>
     </h:head>
     <h:body>
-        
-        <h:form>
-        <p:panel header="Results">
-            
-            <p:commandButton value="Insert Category" action="#{categoryController.goInsert()}"/>
-            
-            
-            
-                <p:dataTable id="resTable" var="category" value="#{categoryController.categories}">
+
+        <h:form id="form1">
+            <p:growl id="growl" showDetail="true" sticky="true" />  
+            <p:panel header="Results">
+
+                <p:commandButton value="Insert Category" action="#{categoryController.goInsert()}"/>
+
+
+
+
+                <p:dataTable id="table" var="category" value="#{categoryController.categories}">
+
                     <p:column headerText="Id">
                         <h:outputText value="#{category.id}" />
                     </p:column>
@@ -27,24 +30,32 @@
                     <p:column headerText="Description">
                         <h:outputText value="#{category.description}" />
                     </p:column>
-                    
+
                     <p:column   headerText="Show" >
                         <p:commandButton value="Show" action="#{categoryController.showCategoryInfo(category)}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Edit" >
                         <p:commandButton value="Edit" action="#{categoryController.updateCategoryInfo(category)}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Delete" >
-                        <p:commandButton value="Delete" update="resTable" action="#{categoryController.removeCategory(category.id)}"/>
+                        
+                        <p:commandButton value="Delete" action="#{categoryController.removeCategory(category)}" update="table" >
+                            <p:confirm header="Confirmación" message="¿Está seguro de eliminar el autor seleccionado?" icon="ui-icon-alert" />
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes btnAceptar" icon="ui-icon-check" update="table" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btnCancelar" icon="ui-icon-close" />
+                            </p:confirmDialog>
+                            <p:ajax event="dialogReturn" update="table"  />
+                        </p:commandButton>
                     </p:column>
 
 
                 </p:dataTable>
 
             </p:panel>
-            
+
         </h:form>
     </h:body>
 </html>
